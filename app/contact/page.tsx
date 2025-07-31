@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Instagram, Linkedin } from "lucide-react";
@@ -11,10 +11,20 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: string; text: string } | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  if (!isLoaded || !userId) {
-    router.push("/sign-in");
-    return null;
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient && isLoaded && !userId) {
+      router.push("/sign-in");
+    }
+  }, [isClient, isLoaded, userId, router]);
+
+  if (!isLoaded || !isClient) {
+    return null; // Show nothing while loading or not on client
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

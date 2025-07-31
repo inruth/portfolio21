@@ -9,8 +9,7 @@ export default function DynamicIconTitle() {
 
   // Changed JSX.Element to React.ReactNode which is more accurate for this case
   const iconMap: Record<string, { icon: React.ReactNode }> = {
-    "/": { icon: <Home className="w-6 h-6" /> }, // Added root path case
-    "/home": { icon: <Home className="w-6 h-6" /> },
+    "/": { icon: <Home className="w-6 h-6" /> },
     "/about": { icon: <User className="w-6 h-6" /> },
     "/contact": { icon: <Mail className="w-6 h-6" /> },
     "/projects": { icon: <Briefcase className="w-6 h-6" /> },

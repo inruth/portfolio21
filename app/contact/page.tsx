@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Instagram, Linkedin } from "lucide-react";
@@ -8,23 +8,19 @@ import { Instagram, Linkedin } from "lucide-react";
 export default function ContactPage() {
   const { userId, isLoaded } = useAuth();
   const router = useRouter();
-
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<{ type: string; text: string } | null>(null);
 
-  useEffect(() => {
-    if (isLoaded && !userId) {
-      router.push("/");
-    }
-  }, [isLoaded, userId, router]);
-
-  if (!isLoaded || !userId) return null;
+  if (!isLoaded || !userId) {
+    router.push("/sign-in");
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setStatus("");
+    setStatus(null);
 
     try {
       const res = await fetch("/api/contact", {
@@ -34,17 +30,17 @@ export default function ContactPage() {
       });
 
       const data = await res.json();
-      setLoading(false);
-
-      if (data.success) {
-        setStatus("✅ Message sent successfully!");
-        setMessage("");
+      
+      if (data.error) {
+        setStatus({ type: "error", text: data.error });
       } else {
-        setStatus("❌ Failed to send message.");
+        setStatus({ type: "success", text: "Message sent successfully!" });
+        setMessage("");
       }
     } catch (error) {
+      setStatus({ type: "error", text: "Failed to send message. Please try again." });
+    } finally {
       setLoading(false);
-      setStatus("❌ An error occurred while sending the message.");
     }
   };
 
@@ -54,7 +50,7 @@ export default function ContactPage() {
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <textarea
           placeholder="Your message"
-          className="border border-gray-300 p-3 rounded resize-none"
+          className="border border-gray-300 p-3 rounded resize-none dark:bg-gray-800 dark:border-gray-700"
           rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -63,11 +59,17 @@ export default function ContactPage() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {loading ? "Sending..." : "Send Message"}
         </button>
-        {status && <p className="text-sm text-gray-700">{status}</p>}
+        {status && (
+          <p className={`text-sm ${
+            status.type === "success" ? "text-green-600" : "text-red-600"
+          }`}>
+            {status.text}
+          </p>
+        )}
       </form>
 
       <div className="mt-8">

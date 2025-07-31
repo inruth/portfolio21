@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Instagram, Linkedin, Phone } from "lucide-react";
+import { Instagram, Linkedin } from "lucide-react";
 
 export default function ContactPage() {
   const { userId, isLoaded } = useAuth();

@@ -12,7 +12,7 @@ export default function AboutPage() {
             Translating imagination into intelligent machines.
           </h1>
           <p className="text-gray-300 text-lg">
-            I’m an engineer driven by the synergy of robotics, automation, and frontier tech. From embedded systems to full-scale intelligent machines, I connect hardware with code to create systems that sense, decide, and act.
+            I'm an engineer driven by the synergy of robotics, automation, and frontier tech. From embedded systems to full-scale intelligent machines, I connect hardware with code to create systems that sense, decide, and act.
           </p>
           <p className="text-gray-400 text-base">
             Every build starts with purpose—grounded in real-world needs and future-facing thinking. My work balances precision and possibility, crafting solutions that evolve with the edge of innovation.

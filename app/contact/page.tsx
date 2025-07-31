@@ -26,20 +26,25 @@ export default function ContactPage() {
     setLoading(true);
     setStatus("");
 
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
 
-    const data = await res.json();
-    setLoading(false);
+      const data = await res.json();
+      setLoading(false);
 
-    if (data.success) {
-      setStatus("✅ Message sent successfully!");
-      setMessage("");
-    } else {
-      setStatus("❌ Failed to send message.");
+      if (data.success) {
+        setStatus("✅ Message sent successfully!");
+        setMessage("");
+      } else {
+        setStatus("❌ Failed to send message.");
+      }
+    } catch (error) {
+      setLoading(false);
+      setStatus("❌ An error occurred while sending the message.");
     }
   };
 
@@ -91,4 +96,3 @@ export default function ContactPage() {
     </section>
   );
 }
-

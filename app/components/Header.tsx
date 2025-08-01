@@ -30,7 +30,7 @@ export default function Header() {
 
   return (
     <header className="w-full flex items-center justify-between px-4 py-3 shadow-md bg-white dark:bg-gray-900 sticky top-0 z-50">
-      <Link href="/home" className="flex items-center gap-2 text-xl font-semibold">
+      <Link href="/" className="flex items-center gap-2 text-xl font-semibold">
         {currentIcon}
         <span className="hidden sm:inline">Visruth Kelambeth</span>
       </Link>

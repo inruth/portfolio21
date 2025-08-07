@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Instagram, Linkedin } from "lucide-react";
 
@@ -12,23 +12,29 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: string; text: string } | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (isClient && isLoaded && !userId) {
-      router.push("/sign-in");
-    }
-  }, [isClient, isLoaded, userId, router]);
-
   if (!isLoaded || !isClient) {
-    return null; // Show nothing while loading or not on client
+    return null;
   }
+
+  const handleTextareaClick = () => {
+    if (!userId) {
+      setShowSignInPrompt(true);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userId) {
+      setShowSignInPrompt(true);
+      return;
+    }
+
     setLoading(true);
     setStatus(null);
 
@@ -58,17 +64,41 @@ export default function ContactPage() {
     <section className="max-w-xl mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Contact Me</h2>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <textarea
-          placeholder="Your message"
-          className="border border-gray-300 p-3 rounded resize-none dark:bg-gray-800 dark:border-gray-700"
-          rows={5}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-        />
+        <div className="relative">
+          <textarea
+            placeholder={userId ? "Your message" : "Click to sign in and message"}
+            className="w-full max-w-[544px] border border-gray-300 p-3 rounded resize-none dark:bg-gray-800 dark:border-gray-700"
+            rows={5}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onClick={handleTextareaClick}
+            required
+          />
+          {showSignInPrompt && !userId && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl">
+                <p className="mb-3">Please sign in to send a message</p>
+                <SignInButton>
+                  <button 
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    onClick={() => router.push("/sign-in?redirect_url=/contact")}
+                  >
+                    Sign In
+                  </button>
+                </SignInButton>
+                <button 
+                  onClick={() => setShowSignInPrompt(false)}
+                  className="ml-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !userId}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {loading ? "Sending..." : "Send Message"}
